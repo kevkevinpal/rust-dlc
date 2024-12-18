@@ -19,7 +19,7 @@ use bitcoincore_rpc::jsonrpc::serde_json::Value;
 use bitcoincore_rpc::{json, Auth, Client, RpcApi};
 use bitcoincore_rpc_json::AddressType;
 use dlc_manager::error::Error as ManagerError;
-use dlc_manager::{Blockchain, ContractSignerProvider, SimpleSigner, Utxo, Wallet};
+pub use dlc_manager::{Blockchain, ContractSignerProvider, SimpleSigner, Utxo, Wallet};
 use hex::DisplayHex;
 use json::EstimateMode;
 use lightning::chain::chaininterface::{ConfirmationTarget, FeeEstimator};
@@ -251,7 +251,7 @@ impl ContractSignerProvider for BitcoinCoreProvider {
     }
 }
 
-pub impl Wallet for BitcoinCoreProvider {
+impl Wallet for BitcoinCoreProvider {
     fn get_new_address(&self) -> Result<Address, ManagerError> {
         Ok(self
             .client
