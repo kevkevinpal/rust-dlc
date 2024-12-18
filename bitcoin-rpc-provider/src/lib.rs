@@ -251,7 +251,7 @@ impl ContractSignerProvider for BitcoinCoreProvider {
     }
 }
 
-impl Wallet for BitcoinCoreProvider {
+pub impl Wallet for BitcoinCoreProvider {
     fn get_new_address(&self) -> Result<Address, ManagerError> {
         Ok(self
             .client
