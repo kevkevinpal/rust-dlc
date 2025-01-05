@@ -49,6 +49,7 @@ impl PayoutFunction {
             ));
         }
 
+        println!("payout_curve validate step 1: {:#?}", max_value);
         let covers = {
             let first = self
                 .payout_function_pieces

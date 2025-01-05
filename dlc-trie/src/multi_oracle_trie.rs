@@ -15,6 +15,11 @@ use dlc::{Error, RangePayout};
 /// outcome DLC with t of n oracles where at least t oracles need to sign the
 /// same outcome for the contract to be able to close.
 #[derive(Clone)]
+#[cfg_attr(
+    feature = "use-serde",
+    derive(serde::Serialize, serde::Deserialize),
+    serde(rename_all = "camelCase")
+)]
 pub struct MultiOracleTrie {
     /// The underlying trie data structure.
     digit_trie: DigitTrie<Vec<RangeInfo>>,

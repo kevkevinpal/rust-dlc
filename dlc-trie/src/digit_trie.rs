@@ -6,6 +6,11 @@ use dlc::Error;
 
 /// Structure to store data inserted and looked-up based on digit paths.
 #[derive(Clone)]
+#[cfg_attr(
+    feature = "use-serde",
+    derive(serde::Serialize, serde::Deserialize),
+    serde(rename_all = "camelCase")
+)]
 pub struct DigitTrie<T> {
     /// Use the arena allocated approach which makes it easier to
     /// satisfy the borrow checker.  
@@ -129,12 +134,22 @@ impl<'a, T> DigitTrieIter<'a, T> {
 }
 
 #[derive(Clone)]
+#[cfg_attr(
+    feature = "use-serde",
+    derive(serde::Serialize, serde::Deserialize),
+    serde(rename_all = "camelCase")
+)]
 struct DigitLeaf<T> {
     data: T,
     prefix: Vec<usize>,
 }
 
 #[derive(Clone)]
+#[cfg_attr(
+    feature = "use-serde",
+    derive(serde::Serialize, serde::Deserialize),
+    serde(rename_all = "camelCase")
+)]
 struct DigitNode<T> {
     children: Vec<Option<usize>>,
     prefix: Vec<usize>,

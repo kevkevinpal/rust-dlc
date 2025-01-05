@@ -119,6 +119,11 @@ pub struct EnumerationPayout {
 
 /// Contains the necessary transactions for establishing a DLC
 #[derive(Clone)]
+#[cfg_attr(
+    feature = "use-serde",
+    derive(serde::Serialize, serde::Deserialize),
+    serde(rename_all = "camelCase")
+)]
 pub struct DlcTransactions {
     /// The fund transaction locking both parties collaterals
     pub fund: Transaction,
@@ -384,6 +389,7 @@ pub fn create_dlc_transactions(
     cet_lock_time: u32,
     fund_output_serial_id: u64,
 ) -> Result<DlcTransactions, Error> {
+    println!("in create_dlc_transactions 1");
     let (fund_tx, funding_script_pubkey) = create_fund_transaction_with_fees(
         offer_params,
         accept_params,
@@ -392,12 +398,14 @@ pub fn create_dlc_transactions(
         fund_output_serial_id,
         Amount::ZERO,
     )?;
+    println!("in create_dlc_transactions 2");
     let fund_outpoint = OutPoint {
         txid: fund_tx.compute_txid(),
         vout: util::get_output_for_script_pubkey(&fund_tx, &funding_script_pubkey.to_p2wsh())
             .expect("to find the funding script pubkey")
             .0 as u32,
     };
+    println!("in create_dlc_transactions 3");
     let (cets, refund_tx) = create_cets_and_refund_tx(
         offer_params,
         accept_params,
@@ -408,6 +416,7 @@ pub fn create_dlc_transactions(
         None,
     )?;
 
+    println!("in create_dlc_transactions 4");
     Ok(DlcTransactions {
         fund: fund_tx,
         cets,
@@ -424,13 +433,17 @@ pub(crate) fn create_fund_transaction_with_fees(
     fund_output_serial_id: u64,
     extra_fee: Amount,
 ) -> Result<(Transaction, ScriptBuf), Error> {
+    println!("in create_fund_transaction_with_fees 1");
     let total_collateral = checked_add!(offer_params.collateral, accept_params.collateral)?;
 
+    println!("in create_fund_transaction_with_fees 2");
     let (offer_change_output, offer_fund_fee, offer_cet_fee) =
         offer_params.get_change_output_and_fees(fee_rate_per_vb, extra_fee)?;
+    println!("in create_fund_transaction_with_fees 3");
     let (accept_change_output, accept_fund_fee, accept_cet_fee) =
         accept_params.get_change_output_and_fees(fee_rate_per_vb, extra_fee)?;
 
+    println!("in create_fund_transaction_with_fees 4");
     let fund_output_value = checked_add!(offer_params.input_amount, accept_params.input_amount)?
         - offer_change_output.value
         - accept_change_output.value
@@ -438,11 +451,13 @@ pub(crate) fn create_fund_transaction_with_fees(
         - accept_fund_fee
         - extra_fee;
 
+    println!("in create_fund_transaction_with_fees 5");
     assert_eq!(
         total_collateral + offer_cet_fee + accept_cet_fee + extra_fee,
         fund_output_value
     );
 
+    println!("in create_fund_transaction_with_fees 6");
     assert_eq!(
         offer_params.input_amount + accept_params.input_amount,
         fund_output_value
@@ -453,15 +468,19 @@ pub(crate) fn create_fund_transaction_with_fees(
             + extra_fee
     );
 
+    println!("in create_fund_transaction_with_fees 7");
     let fund_sequence = util::get_sequence(fund_lock_time);
     let (offer_tx_ins, offer_inputs_serial_ids) =
         offer_params.get_unsigned_tx_inputs_and_serial_ids(fund_sequence);
+    println!("in create_fund_transaction_with_fees 8");
     let (accept_tx_ins, accept_inputs_serial_ids) =
         accept_params.get_unsigned_tx_inputs_and_serial_ids(fund_sequence);
 
+    println!("in create_fund_transaction_with_fees 9");
     let funding_script_pubkey =
         make_funding_redeemscript(&offer_params.fund_pubkey, &accept_params.fund_pubkey);
 
+    println!("in create_fund_transaction_with_fees 10");
     let fund_tx = create_funding_transaction(
         &funding_script_pubkey,
         fund_output_value,
@@ -477,6 +496,7 @@ pub(crate) fn create_fund_transaction_with_fees(
         fund_lock_time,
     );
 
+    println!("in create_fund_transaction_with_fees 11");
     Ok((fund_tx, funding_script_pubkey))
 }
 

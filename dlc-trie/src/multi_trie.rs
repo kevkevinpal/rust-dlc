@@ -10,8 +10,13 @@ use digit_trie::{DigitTrie, DigitTrieDump, DigitTrieIter};
 use dlc::Error;
 use multi_oracle::compute_outcome_combinations;
 
-#[derive(Clone, Debug)]
 /// Information stored in a node.
+#[derive(Clone, Debug)]
+#[cfg_attr(
+    feature = "use-serde",
+    derive(serde::Serialize, serde::Deserialize),
+    serde(rename_all = "camelCase")
+)]
 pub struct TrieNodeInfo {
     /// The index of the sub-trie.
     pub trie_index: usize,
@@ -166,6 +171,11 @@ impl<'a, T> Iterator for MultiTrieIterator<'a, T> {
 
 /// Struct used to store DLC outcome information for multi oracle cases.  
 #[derive(Clone)]
+#[cfg_attr(
+    feature = "use-serde",
+    derive(serde::Serialize, serde::Deserialize),
+    serde(rename_all = "camelCase")
+)]
 pub struct MultiTrie<T> {
     store: Vec<MultiTrieNode<T>>,
     nb_tries: usize,

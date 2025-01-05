@@ -14,6 +14,11 @@ use dlc::{Error, RangePayout};
 /// outcome DLC with multiple oracles where some difference between the outcomes
 /// of each oracle can be supported.
 #[derive(Clone)]
+#[cfg_attr(
+    feature = "use-serde",
+    derive(serde::Serialize, serde::Deserialize),
+    serde(rename_all = "camelCase")
+)]
 pub struct MultiOracleTrieWithDiff {
     /// The underlying trie of trie
     pub multi_trie: MultiTrie<RangeInfo>,

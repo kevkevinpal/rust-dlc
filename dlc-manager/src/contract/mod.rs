@@ -175,6 +175,12 @@ pub struct ClosedContract {
 /// Information about the adaptor signatures and the CET for which they are
 /// valid.
 #[derive(Clone)]
+#[cfg_attr(
+    feature = "use-serde",
+    derive(serde::Serialize, serde::Deserialize),
+    serde(rename_all = "camelCase")
+)]
+
 pub enum AdaptorInfo {
     /// For enumeration outcome DLC, no special information needs to be kept.
     Enum,
@@ -217,9 +223,12 @@ impl ContractDescriptor {
         let first = announcements
             .first()
             .expect("to have at least one element.");
+        println!("validate step 1");
+        println!("{:#?}", first);
         match &first.oracle_event.event_descriptor {
             EventDescriptor::EnumEvent(ee) => {
                 for announcement in announcements {
+                    println!("validate step 2");
                     match &announcement.oracle_event.event_descriptor {
                         EventDescriptor::EnumEvent(enum_desc) => {
                             if !unordered_equal(&ee.outcomes, &enum_desc.outcomes) {

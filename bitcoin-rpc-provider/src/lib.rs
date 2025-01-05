@@ -30,7 +30,7 @@ use rust_bitcoin_coin_selection::select_coins;
 const MIN_FEERATE: u32 = 253;
 
 pub struct BitcoinCoreProvider {
-    client: Arc<Mutex<Client>>,
+    pub client: Arc<Mutex<Client>>,
     // Used to implement the FeeEstimator interface, heavily inspired by
     // https://github.com/lightningdevkit/ldk-sample/blob/main/src/bitcoind_client.rs#L26
     fees: Arc<HashMap<ConfirmationTarget, AtomicU32>>,
@@ -174,6 +174,7 @@ impl ContractSignerProvider for BitcoinCoreProvider {
     }
 
     fn derive_contract_signer(&self, keys_id: [u8; 32]) -> Result<Self::Signer, ManagerError> {
+        println!("in derive_contract_signer step 1");
         let label_map = self
             .client
             .lock()
@@ -184,9 +185,12 @@ impl ContractSignerProvider for BitcoinCoreProvider {
             )
             .unwrap_or_default();
 
+        println!("in derive_contract_signer step 2");
+        println!("label_map {:#?}", label_map);
         if let Some(address) = label_map.keys().next() {
             // note: importing a private key seem to generate three different addresses, we thus
             // check that we have exactly three addresses for a single `keys_id`.
+            println!("in derive_contract_signer step 3 branch 1");
             assert_eq!(label_map.len(), 3);
 
             let sk = self
@@ -199,6 +203,7 @@ impl ContractSignerProvider for BitcoinCoreProvider {
         } else {
             let sk = SecretKey::new(&mut thread_rng());
             let network = self.get_network()?;
+            println!("in derive_contract_signer step 3 branch 2");
             self.client
                 .lock()
                 .unwrap()

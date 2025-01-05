@@ -274,6 +274,7 @@ where
         contract_input: &ContractInput,
         counter_party: PublicKey,
     ) -> Result<OfferDlc, Error> {
+        println!("In send_offer");
         let oracle_announcements = contract_input
             .contract_infos
             .iter()
@@ -294,6 +295,7 @@ where
         counter_party: PublicKey,
         oracle_announcements: Vec<Vec<OracleAnnouncement>>,
     ) -> Result<OfferDlc, Error> {
+        println!("In send_offer_with_announcements");
         let (offered_contract, offer_msg) = crate::contract_updater::offer_contract(
             &self.secp,
             contract_input,
@@ -306,10 +308,13 @@ where
             &self.signer_provider,
         )?;
 
+        println!("In send_offer_with_announcements step 1");
         offered_contract.validate()?;
 
+        println!("In send_offer_with_announcements step 2");
         self.store.create_contract(&offered_contract)?;
 
+        println!("In send_offer_with_announcements step 3");
         Ok(offer_msg)
     }
 
@@ -474,6 +479,7 @@ where
         &self,
         oracle_inputs: &OracleInput,
     ) -> Result<Vec<OracleAnnouncement>, Error> {
+        println!("in get_oracle_announcements");
         let mut announcements = Vec::new();
         for pubkey in &oracle_inputs.public_keys {
             let oracle = self
@@ -483,6 +489,7 @@ where
             announcements.push(oracle.get_announcement(&oracle_inputs.event_id)?.clone());
         }
 
+        println!("finishing get_oracle_announcements");
         Ok(announcements)
     }
 

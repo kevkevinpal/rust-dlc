@@ -150,9 +150,15 @@ impl Oracle for P2PDOracleClient {
     }
 
     fn get_announcement(&self, event_id: &str) -> Result<OracleAnnouncement, DlcManagerError> {
+        println!("in get_announcement");
         let (asset_id, date_time) = parse_event_id(event_id)?;
+        println!("in get_announcement step 1");
         let path = announcement_path(&self.host, &asset_id, &date_time);
+        println!("in get_announcement step 2");
+        println!("path : {:#?}", path);
         let announcement = get(&path)?;
+        println!("Response body: {:#?}", announcement);
+        println!("finihsed get_announcement");
         Ok(announcement)
     }
 

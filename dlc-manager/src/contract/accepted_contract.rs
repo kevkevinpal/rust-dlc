@@ -13,6 +13,11 @@ use std::fmt::Write as _;
 
 /// An AcceptedContract represents a contract in the accepted state.
 #[derive(Clone)]
+#[cfg_attr(
+    feature = "use-serde",
+    derive(serde::Serialize, serde::Deserialize),
+    serde(rename_all = "camelCase")
+)]
 pub struct AcceptedContract {
     /// The offered contract that was accepted.
     pub offered_contract: OfferedContract,

@@ -45,11 +45,16 @@ where
     T::Target: Time,
     SP::Target: ContractSignerProvider<Signer = X>,
 {
+    println!("in offered_contract step 1");
     contract_input.validate()?;
 
+    println!("in offered_contract step 2");
     let id = crate::utils::get_new_temporary_id();
+    println!("in offered_contract step 3");
     let keys_id = signer_provider.derive_signer_key_id(true, id);
+    println!("in offered_contract step 4");
     let signer = signer_provider.derive_contract_signer(keys_id)?;
+    println!("in offered_contract step 5");
     let (party_params, funding_inputs_info) = crate::utils::get_party_params(
         secp,
         contract_input.offer_collateral,
@@ -59,6 +64,7 @@ where
         blockchain,
     )?;
 
+    println!("in offered_contract step 6");
     let offered_contract = OfferedContract::new(
         id,
         contract_input,
@@ -71,8 +77,10 @@ where
         keys_id,
     );
 
+    println!("in offered_contract step 7");
     let offer_msg: OfferDlc = (&offered_contract).into();
 
+    println!("in offered_contract step 8");
     Ok((offered_contract, offer_msg))
 }
 
@@ -93,6 +101,7 @@ where
     let total_collateral = offered_contract.total_collateral;
 
     let signer = signer_provider.derive_contract_signer(offered_contract.keys_id)?;
+    println!("in accept_contract 1");
     let (accept_params, funding_inputs) = crate::utils::get_party_params(
         secp,
         total_collateral - offered_contract.offer_params.collateral,
@@ -101,6 +110,7 @@ where
         &signer,
         blockchain,
     )?;
+    println!("in accept_contract 2");
 
     let dlc_transactions = dlc::create_dlc_transactions(
         &offered_contract.offer_params,
@@ -113,8 +123,10 @@ where
         offered_contract.fund_output_serial_id,
     )?;
 
+    println!("in accept_contract 3");
     let fund_output_value = dlc_transactions.get_fund_output().value;
 
+    println!("in accept_contract 4");
     let (accepted_contract, adaptor_sigs) = accept_contract_internal(
         secp,
         offered_contract,
@@ -126,8 +138,10 @@ where
         &dlc_transactions,
     )?;
 
+    println!("in accept_contract 5");
     let accept_msg: AcceptDlc = accepted_contract.get_accept_contract_msg(&adaptor_sigs);
 
+    println!("in accept_contract 6");
     Ok((accepted_contract, accept_msg))
 }
 
