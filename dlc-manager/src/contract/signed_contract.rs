@@ -11,9 +11,10 @@ use dlc_messages::SignDlc;
 use secp256k1_zkp::ecdsa::Signature;
 use secp256k1_zkp::EcdsaAdaptorSignature;
 use serde::Serialize;
+use serde::Deserialize;
 
 /// Contain information about a contract that was fully signed.
-#[derive(Clone, Serialize)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct SignedContract {
     /// The accepted contract that was signed.
     pub accepted_contract: AcceptedContract,
